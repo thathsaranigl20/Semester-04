@@ -1,0 +1,70 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+void change(int& a, int& b) {//swapping
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int partition(int arr[], int small, int high) {
+    int pivot = arr[high];//select pivot
+    int i = small - 1;
+    for (int j = small; j <= high - 1; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            change(arr[i], arr[j]);
+        }
+    }
+    change(arr[i + 1], arr[high]);//swapping
+    return i + 1;
+}
+
+void quicksort(int arr[], int size) {//quick sorting
+    int* stack = new int[size];
+    int last = -1;
+    stack[++last] = 0;
+    stack[++last] = size - 1;
+
+    while (last >= 0) {
+        int high = stack[last--];
+        int low = stack[last--];
+
+        int p = partition(arr, low, high);
+
+        if (p - 1 > low) {
+            stack[++last] = low;
+            stack[++last] = p - 1;
+        }
+
+        if (p + 1 < high) {
+            stack[++last] = p + 1;
+            stack[++last] = high;
+        }
+    }
+
+    delete[] stack;
+}
+
+int main() {
+    int arrsize; // Create a random array of size given
+    cout<<"input array size:";
+    cin >> arrsize;
+    int arr[arrsize];
+    srand(time(NULL));
+    for (int i = 0; i < arrsize; i++) {
+        arr[i] = rand() % 100;
+    }
+
+    clock_t start = clock();
+    quicksort(arr, arrsize);
+    clock_t end = clock();
+
+    
+    double duration = double(end - start) / CLOCKS_PER_SEC;
+    cout << "Time for quick sort: " << duration << " seconds" << endl;// time output
+
+    return 0;
+}
